@@ -1,0 +1,82 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// User model - stores Clerk user information
+model User {
+  id        String    @id // Clerk userId
+  email     String?   @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  // Relations
+  routines  Routine[]
+
+  @@map("users")
+}
+
+// Exercise model - stores exercise information
+model Exercise {
+  id           String   @id @default(cuid())
+  name         String
+  muscleGroup  String
+  equipment    String
+  difficulty   String
+  location     String
+  instructions String?  @db.Text
+  tips         String?  @db.Text
+  videoUrl     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relations
+  routineExercises RoutineExercise[]
+
+  @@map("exercises")
+}
+
+// Routine model - stores user workout routines
+model Routine {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercises RoutineExercise[]
+
+  @@index([userId])
+  @@map("routines")
+}
+
+// RoutineExercise model - junction table for routines and exercises
+model RoutineExercise {
+  id         String   @id @default(cuid())
+  routineId  String
+  exerciseId String
+  sets       String   // Changed to String to support "3" or "3-4"
+  reps       String   // Changed to String to support "10" or "10-12" or "30s"
+  restTime   String   // e.g., "60s" or "1-2min"
+  notes      String?  @db.Text
+  order      Int      // Order of exercise in the routine
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  // Relations
+  routine    Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@unique([routineId, exerciseId, order])
+  @@index([routineId])
+  @@index([exerciseId])
+  @@map("routine_exercises")
+}
