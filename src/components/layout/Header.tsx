@@ -10,6 +10,7 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import { useState } from "react";
+import Link from "next/link";
 
 export function Header() {
   const [showAuthPrompt, setShowAuthPrompt] = useState(true);
@@ -21,6 +22,7 @@ export function Header() {
           <Dumbbell className="h-5 w-5 mt-1" />
           <h1 className="text-2xl font-bold">FitBuilder</h1>
         </div>
+
         <div className="flex items-center gap-3">
           <SignedOut>
             <SignInButton mode="modal">
@@ -31,6 +33,14 @@ export function Header() {
             </SignUpButton>
           </SignedOut>
           <SignedIn>
+          <nav className="flex items-center">
+            <Link href="/exercises">
+              <Button variant="ghost">Exercises</Button>
+            </Link>
+            <Link href="/routines">
+              <Button variant="ghost">Routines</Button>
+            </Link>
+          </nav>
             <UserButton />
           </SignedIn>
         </div>
