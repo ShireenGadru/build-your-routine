@@ -11,13 +11,16 @@ import {
 } from "@clerk/nextjs";
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function Header() {
   const [showAuthPrompt, setShowAuthPrompt] = useState(true);
+  const pathname = usePathname();
+  const isLandingPage = pathname === "/";
 
   return (
     <>
-      <header className="flex items-center justify-between px-6 py-4 border-b">
+      <header className="flex items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
           <Dumbbell className="h-5 w-5 mt-1" />
           <h1 className="text-2xl font-bold">FitBuilder</h1>
@@ -46,10 +49,10 @@ export function Header() {
         </div>
       </header>
 
-      {/* Guest Mode Banner */}
+      {/* Guest Mode Banner - Only show when not on landing page and user is signed out */}
       <SignedOut>
-        {showAuthPrompt && (
-          <div className="bg-muted border-b px-6 py-3 flex items-center justify-between">
+        {showAuthPrompt && !isLandingPage && (
+          <div className="bg-muted px-6 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div>
                 <p className="text-sm font-medium">
